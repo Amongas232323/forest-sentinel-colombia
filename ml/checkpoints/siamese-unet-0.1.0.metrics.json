@@ -1,0 +1,130 @@
+{
+  "test_model": {
+    "precision": 0.06037090026622236,
+    "recall": 0.49377869945193303,
+    "f1": 0.1075877872450297,
+    "dice": 0.1075877872450297,
+    "iou": 0.056852194527112876,
+    "accuracy": 0.9788688101635746,
+    "false_positive_rate": 0.01987659566153989,
+    "false_negative_rate": 0.5062213005480669,
+    "tp": 6667,
+    "fp": 103767,
+    "fn": 6835,
+    "tn": 5116795
+  },
+  "test_baseline": {
+    "precision": 0.04023289485844552,
+    "recall": 0.09672641090208858,
+    "f1": 0.05682831843004156,
+    "dice": 0.05682831843004156,
+    "iou": 0.029245135141187272,
+    "accuracy": 0.9917175258078618,
+    "false_positive_rate": 0.005967748299895681,
+    "false_negative_rate": 0.9032735890979114,
+    "tp": 1306,
+    "fp": 31155,
+    "fn": 12196,
+    "tn": 5189407
+  },
+  "val_f1": 0.258447198390001,
+  "threshold": 0.8499999999999999,
+  "splits": {
+    "guaviare-charras": "train",
+    "guaviare-calamar": "train",
+    "guaviare-elretorno": "train",
+    "meta-tinigua": "train",
+    "caqueta-chaira": "train",
+    "meta-macarena": "val",
+    "caqueta-sanvicente": "test",
+    "amazonas-puertonarino": "test"
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "loss": 1.5971599042415618,
+      "val_f1": 0.05530239770965049,
+      "val_threshold": 0.8499999999999999,
+      "elapsed_s": 159
+    },
+    {
+      "epoch": 2,
+      "loss": 1.4004594842592875,
+      "val_f1": 0.25740975666013144,
+      "val_threshold": 0.8499999999999999,
+      "elapsed_s": 315
+    },
+    {
+      "epoch": 3,
+      "loss": 1.2512457390626273,
+      "val_f1": 0.14367744351516665,
+      "val_threshold": 0.8499999999999999,
+      "elapsed_s": 467
+    },
+    {
+      "epoch": 4,
+      "loss": 1.1512021680672964,
+      "val_f1": 0.04366100221022501,
+      "val_threshold": 0.8499999999999999,
+      "elapsed_s": 622
+    },
+    {
+      "epoch": 5,
+      "loss": 1.068314359585444,
+      "val_f1": 0.13665846566763587,
+      "val_threshold": 0.8499999999999999,
+      "elapsed_s": 777
+    },
+    {
+      "epoch": 6,
+      "loss": 0.9892914672692616,
+      "val_f1": 0.08499280019667756,
+      "val_threshold": 0.8499999999999999,
+      "elapsed_s": 929
+    },
+    {
+      "epoch": 7,
+      "loss": 0.9226312736670176,
+      "val_f1": 0.08955334071613141,
+      "val_threshold": 0.8499999999999999,
+      "elapsed_s": 1085
+    },
+    {
+      "epoch": 8,
+      "loss": 0.8747212886810303,
+      "val_f1": 0.11664698937426211,
+      "val_threshold": 0.8499999999999999,
+      "elapsed_s": 1243
+    },
+    {
+      "epoch": 9,
+      "loss": 0.8591575135787328,
+      "val_f1": 0.1138090133755884,
+      "val_threshold": 0.8499999999999999,
+      "elapsed_s": 1405
+    },
+    {
+      "epoch": 10,
+      "loss": 0.840289044380188,
+      "val_f1": 0.2111111111111111,
+      "val_threshold": 0.8499999999999999,
+      "elapsed_s": 1586
+    },
+    {
+      "epoch": 11,
+      "loss": 0.7975069334109625,
+      "val_f1": 0.258447198390001,
+      "val_threshold": 0.8499999999999999,
+      "elapsed_s": 1739
+    },
+    {
+      "epoch": 12,
+      "loss": 0.7900432844956716,
+      "val_f1": 0.2341808449627222,
+      "val_threshold": 0.8499999999999999,
+      "elapsed_s": 1906
+    }
+  ],
+  "pos_weight": 20.0,
+  "train_positive_px": 74390
+}

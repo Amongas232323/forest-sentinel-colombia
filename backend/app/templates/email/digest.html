@@ -1,0 +1,15 @@
+{% extends "_layout.html" %}
+{% block body %}
+<p style="margin:0 0 12px 0;font-family:'Courier New',monospace;font-size:12px;letter-spacing:2px;color:#91C77A;">RESUMEN {{ period_label|upper }}</p>
+<h1 style="margin:0 0 16px 0;font-size:26px;line-height:32px;color:#F2F3EA;">{{ alerts|length }} {{ "hallazgo nuevo" if alerts|length == 1 else "hallazgos nuevos" }}</h1>
+<p style="margin:0 0 20px 0;font-size:16px;line-height:24px;color:#F2F3EA;">Esto es lo que el sistema detectó en tus zonas desde el {{ since }}.</p>
+{% for a in alerts %}
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin:0 0 10px 0;">
+  <tr><td style="padding:12px 14px;background:#183D2C;border-radius:10px;">
+    <p style="margin:0 0 4px 0;font-size:15px;color:#F2F3EA;"><strong>{{ a.explanation.headline }}</strong></p>
+    <p style="margin:0;font-size:13px;color:#A5B0A7;">{{ a.region_name }} · {{ "%.1f"|format(a.area_ha) }} ha · {{ a.code }}</p>
+  </td></tr>
+</table>
+{% endfor %}
+<a href="{{ web_url }}/app/alerts" style="display:inline-block;margin-top:14px;background:#91C77A;color:#10251D;text-decoration:none;font-weight:700;padding:14px 22px;border-radius:999px;font-size:15px;">Ver el centro de alertas</a>
+{% endblock %}

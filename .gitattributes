@@ -1,0 +1,16 @@
+# Finales de línea coherentes entre Windows, Linux y macOS.
+* text=auto
+# Los scripts de shell y los archivos que se ejecutan dentro de contenedores Linux deben usar LF.
+*.sh text eol=lf
+Dockerfile text eol=lf
+*.py text eol=lf
+.env.example text eol=lf
+# Los scripts de PowerShell, CRLF.
+*.ps1 text eol=crlf
+# Binarios
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.pt binary
+*.tif binary

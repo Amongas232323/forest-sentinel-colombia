@@ -1,0 +1,299 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Forest Sentinel — «Atlas de campo»
+   La idea es un atlas de campo, no un SaaS: papel, tinta, líneas finas y la imagen
+   satelital como protagonista. El color solo se usa para dar significado:
+     brand  = acción / bosque sano           ochre  = atención (moderada, alta)
+     signal = SOLO alertas críticas          water  = foco + referencia del mapa
+   Todos los pares de texto de abajo cumplen WCAG AA (≥ 4.5:1) sobre paper, paper-2 y field.
+   ───────────────────────────────────────────────────────────────────────────── */
+@theme {
+  /* Fondos */
+  --color-paper: #f4f2eb;
+  --color-paper-2: #ece9df;
+  --color-paper-3: #e2ded1;
+  --color-field: #fbfaf6;
+  --color-rule: #d3cec0;
+  --color-rule-strong: #857f70; /* bordes de controles, ≥ 3:1 (WCAG 1.4.11) */
+
+  /* Tinta */
+  --color-ink: #16211b;    /* 14.8:1 */
+  --color-ink-2: #4c5750;  /* 6.7:1  texto secundario */
+  --color-ink-3: #646a63;  /* 4.9:1  texto terciario, nunca sobre paper-3 */
+
+  /* Significado */
+  --color-brand: #1f4d36;
+  --color-brand-2: #163a28;
+  --color-brand-tint: #dce7d9;
+  --color-moss: #55753a;   /* solo para marcas y barras, no para texto */
+  --color-ochre: #8a5508;
+  --color-ochre-mark: #c98a1c;
+  --color-ochre-tint: #f3e4c4;
+  --color-signal: #a82820;
+  --color-signal-tint: #f5dcd6;
+  --color-water: #335f7c;
+  --color-water-tint: #d9e4ea;
+
+  /* Tipografía: Newsreader (títulos, tamaños ópticos) · Public Sans (texto) · IBM Plex Mono (datos) */
+  --font-display: var(--font-newsreader), "Iowan Old Style", Georgia, serif;
+  --font-sans: var(--font-public-sans), "Segoe UI", system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+
+  /* Escala: tercera mayor sobre 16 px (12 · 14 · 16 · 20 · 25 · 31 · 39 · 49 · 61) */
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1.4;
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.5;
+  --text-body: 1rem;
+  --text-body--line-height: 1.6;
+  --text-lead: 1.25rem;
+  --text-lead--line-height: 1.45;
+  --text-h4: 1.5625rem;
+  --text-h4--line-height: 1.2;
+  --text-h3: 1.953rem;
+  --text-h3--line-height: 1.12;
+  --text-h2: 2.441rem;
+  --text-h2--line-height: 1.06;
+  --text-h1: 3.052rem;
+  --text-h1--line-height: 1.02;
+  --text-display: 3.815rem;
+  --text-display--line-height: 0.98;
+
+  /* Forma: una lámina impresa, no una burbuja */
+  /* Todas las utilidades rounded-* del código terminan en esta escala corta. */
+  --radius-xs: 2px;
+  --radius-sm: 2px;
+  --radius-md: 3px;
+  --radius-lg: 4px;
+  --radius-xl: 4px;
+  --radius-2xl: 4px;
+  --radius-3xl: 4px;
+  --radius-panel: 4px;
+
+  /* Una sola elevación, para lo que flota sobre la página (menús, sheets, toasts) */
+  --shadow-float: 0 1px 0 rgb(22 33 27 / 0.06), 0 12px 32px -12px rgb(22 33 27 / 0.28);
+
+  --ease-orbit: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-plain: cubic-bezier(0.2, 0, 0, 1);
+
+  --animate-pulse-ring: pulse-ring 2.4s var(--ease-orbit) infinite;
+  --animate-scan: scan 3.2s linear infinite;
+  --animate-shimmer: shimmer 1.8s linear infinite;
+
+  @keyframes pulse-ring {
+    0% { transform: scale(0.6); opacity: 0.9; }
+    100% { transform: scale(2.4); opacity: 0; }
+  }
+  @keyframes scan {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+  }
+  @keyframes shimmer {
+    0% { background-position: -400px 0; }
+    100% { background-position: 400px 0; }
+  }
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+  html {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-feature-settings: "kern", "liga";
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    min-height: 100dvh;
+    background: var(--color-paper);
+  }
+  ::selection {
+    background: var(--color-water-tint);
+    color: var(--color-ink);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-water);
+    outline-offset: 2px;
+    border-radius: var(--radius-xs);
+  }
+  h1, h2, h3 {
+    text-wrap: balance;
+    font-optical-sizing: auto;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  /* Las cifras en los datos nunca saltan cuando se actualizan. */
+  .font-mono, td, dd {
+    font-variant-numeric: tabular-nums;
+  }
+  input[type="date"] {
+    color-scheme: light;
+  }
+}
+
+@layer components {
+  /* Una lámina en la página del atlas: papel plano, una línea fina, nada de vidrio ni sombra. */
+  .panel {
+    position: relative;
+    border-radius: var(--radius-panel);
+    background: var(--color-field);
+    border: 1px solid var(--color-rule);
+  }
+  /* Las marcas de registro en las esquinas solo se dejan para las láminas con imágenes (.plate). */
+  .panel-ticks::before,
+  .panel-ticks::after {
+    content: none;
+  }
+
+  /* Marco para imágenes satelitales: línea fina y marcas de registro justo por fuera de las esquinas. */
+  .plate {
+    position: relative;
+    border: 1px solid var(--color-ink);
+    border-radius: var(--radius-xs);
+    background: var(--color-paper-3);
+    /* Recortamos el contenido al marco pero dejamos espacio para las marcas que van por fuera. */
+    clip-path: inset(-8px);
+  }
+  .plate::before,
+  .plate::after {
+    content: "";
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .plate::before {
+    top: -7px;
+    left: -7px;
+    border-top: 1px solid var(--color-ink);
+    border-left: 1px solid var(--color-ink);
+  }
+  .plate::after {
+    right: -7px;
+    bottom: -7px;
+    border-right: 1px solid var(--color-ink);
+    border-bottom: 1px solid var(--color-ink);
+  }
+
+  /* Antetítulo encima de un encabezado: versalitas en la fuente de texto, legible en AA. */
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-ink-2);
+  }
+
+  /* Línea editorial con el número de sección en el margen. */
+  .rule-top {
+    border-top: 1px solid var(--color-ink);
+  }
+
+  /* Los selects nativos pierden la flecha con appearance-none; dibujamos una en tinta. */
+  .select-chevron {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5l5-5' fill='none' stroke='%2316211b' stroke-width='1.5'/%3E%3C/svg%3E");
+    background-size: 12px 8px;
+    background-position: right 14px center;
+    background-repeat: no-repeat;
+  }
+
+  .graticule {
+    background-image:
+      linear-gradient(rgb(22 33 27 / 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(22 33 27 / 0.06) 1px, transparent 1px);
+    background-size: 64px 64px;
+  }
+
+  .skeleton {
+    background: linear-gradient(90deg, var(--color-paper-2) 0, var(--color-paper-3) 40%, var(--color-paper-2) 80%);
+    background-size: 800px 100%;
+    animation: var(--animate-shimmer);
+    border-radius: var(--radius-xs);
+  }
+
+  /* El subrayado aparece al pasar el mouse; en reposo el link deja una línea suave para no depender solo del color. */
+  .link-underline {
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+    transition: text-decoration-color 0.2s var(--ease-plain);
+  }
+  .link-underline:hover,
+  .link-underline:focus-visible {
+    text-decoration-color: currentColor;
+  }
+}
+
+/* Controles de MapLibre con el estilo del atlas */
+.maplibregl-ctrl-group {
+  background: var(--color-field) !important;
+  border: 1px solid var(--color-ink);
+  border-radius: var(--radius-xs) !important;
+  box-shadow: none !important;
+  overflow: hidden;
+}
+.maplibregl-ctrl-group button + button { border-top: 1px solid var(--color-rule) !important; }
+.maplibregl-ctrl-attrib {
+  background: rgb(251 250 246 / 0.88) !important;
+  color: var(--color-ink-2) !important;
+  font-size: 10px;
+}
+.maplibregl-ctrl-attrib a { color: var(--color-water) !important; }
+.maplibregl-ctrl-scale {
+  background: rgb(251 250 246 / 0.85) !important;
+  border-color: var(--color-ink) !important;
+  color: var(--color-ink) !important;
+  font-family: var(--font-mono);
+}
+.maplibregl-popup-content {
+  background: var(--color-field) !important;
+  color: var(--color-ink);
+  border: 1px solid var(--color-ink);
+  border-radius: var(--radius-xs) !important;
+  box-shadow: var(--shadow-float) !important;
+  font-family: var(--font-sans);
+}
+.maplibregl-popup-tip { border-top-color: var(--color-ink) !important; border-bottom-color: var(--color-ink) !important; }
+
+/* Los títulos grandes piden tracking negativo; el texto pequeño se queda en 0 o positivo. */
+@utility display-tight {
+  letter-spacing: -0.012em;
+}
+
+/* Los materiales translúcidos se vuelven sólidos cuando el usuario pide menos transparencia. */
+@media (prefers-reduced-transparency: reduce) {
+  [class*="backdrop-blur"],
+  [data-material] {
+    backdrop-filter: none !important;
+    background-color: var(--color-paper) !important;
+  }
+}
+
+/* Más contraste: líneas más fuertes en todos lados. */
+@media (prefers-contrast: more) {
+  .panel {
+    border-color: var(--color-ink);
+  }
+  :root {
+    --color-rule: #857f70;
+    --color-ink-2: #2f3832;
+    --color-ink-3: #3c443e;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

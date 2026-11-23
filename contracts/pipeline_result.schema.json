@@ -1,0 +1,266 @@
+{
+  "$defs": {
+    "Artifacts": {
+      "description": "Rutas relativas (dentro del directorio de la ejecución) de la evidencia generada.",
+      "properties": {
+        "reference_rgb": {
+          "title": "Reference Rgb",
+          "type": "string"
+        },
+        "observation_rgb": {
+          "title": "Observation Rgb",
+          "type": "string"
+        },
+        "change_overlay": {
+          "title": "Change Overlay",
+          "type": "string"
+        },
+        "evidence": {
+          "title": "Evidence",
+          "type": "string"
+        },
+        "bounds": {
+          "items": {
+            "type": "number"
+          },
+          "title": "Bounds",
+          "type": "array"
+        },
+        "corners": {
+          "items": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array"
+          },
+          "title": "Corners",
+          "type": "array"
+        }
+      },
+      "required": [
+        "reference_rgb",
+        "observation_rgb",
+        "change_overlay",
+        "evidence",
+        "bounds"
+      ],
+      "title": "Artifacts",
+      "type": "object"
+    },
+    "ChangeSignal": {
+      "description": "Pista heurística sobre el *tipo* de cambio. Nunca es una confirmación.",
+      "enum": [
+        "vegetation_loss",
+        "possible_burn",
+        "possible_flooding"
+      ],
+      "title": "ChangeSignal",
+      "type": "string"
+    },
+    "CompositeInfo": {
+      "properties": {
+        "period": {
+          "title": "Period",
+          "type": "string"
+        },
+        "scene_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Scene Ids",
+          "type": "array"
+        },
+        "first_acquired": {
+          "format": "date-time",
+          "title": "First Acquired",
+          "type": "string"
+        },
+        "last_acquired": {
+          "format": "date-time",
+          "title": "Last Acquired",
+          "type": "string"
+        },
+        "valid_fraction": {
+          "title": "Valid Fraction",
+          "type": "number"
+        }
+      },
+      "required": [
+        "period",
+        "scene_ids",
+        "first_acquired",
+        "last_acquired",
+        "valid_fraction"
+      ],
+      "title": "CompositeInfo",
+      "type": "object"
+    },
+    "Finding": {
+      "properties": {
+        "geometry": {
+          "additionalProperties": true,
+          "title": "Geometry",
+          "type": "object"
+        },
+        "centroid": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Centroid",
+          "type": "array"
+        },
+        "area_ha": {
+          "title": "Area Ha",
+          "type": "number"
+        },
+        "mean_score": {
+          "title": "Mean Score",
+          "type": "number"
+        },
+        "max_score": {
+          "title": "Max Score",
+          "type": "number"
+        },
+        "severity": {
+          "$ref": "#/$defs/Severity"
+        },
+        "signal": {
+          "$ref": "#/$defs/ChangeSignal"
+        },
+        "mean_ndvi_drop": {
+          "title": "Mean Ndvi Drop",
+          "type": "number"
+        },
+        "mean_nbr_drop": {
+          "title": "Mean Nbr Drop",
+          "type": "number"
+        },
+        "valid_fraction": {
+          "title": "Valid Fraction",
+          "type": "number"
+        }
+      },
+      "required": [
+        "geometry",
+        "centroid",
+        "area_ha",
+        "mean_score",
+        "max_score",
+        "severity",
+        "signal",
+        "mean_ndvi_drop",
+        "mean_nbr_drop",
+        "valid_fraction"
+      ],
+      "title": "Finding",
+      "type": "object"
+    },
+    "Severity": {
+      "enum": [
+        "low",
+        "moderate",
+        "high",
+        "priority"
+      ],
+      "title": "Severity",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "contract_version": {
+      "title": "Contract Version",
+      "type": "string"
+    },
+    "detector_id": {
+      "title": "Detector Id",
+      "type": "string"
+    },
+    "detector_version": {
+      "title": "Detector Version",
+      "type": "string"
+    },
+    "detector_kind": {
+      "title": "Detector Kind",
+      "type": "string"
+    },
+    "aoi": {
+      "items": {
+        "type": "number"
+      },
+      "title": "Aoi",
+      "type": "array"
+    },
+    "reference": {
+      "$ref": "#/$defs/CompositeInfo"
+    },
+    "observation": {
+      "$ref": "#/$defs/CompositeInfo"
+    },
+    "quality_ok": {
+      "title": "Quality Ok",
+      "type": "boolean"
+    },
+    "quality_notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Quality Notes",
+      "type": "array"
+    },
+    "analysed_area_ha": {
+      "title": "Analysed Area Ha",
+      "type": "number"
+    },
+    "changed_area_ha": {
+      "title": "Changed Area Ha",
+      "type": "number"
+    },
+    "findings": {
+      "items": {
+        "$ref": "#/$defs/Finding"
+      },
+      "title": "Findings",
+      "type": "array"
+    },
+    "artifacts": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Artifacts"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "parameters": {
+      "additionalProperties": true,
+      "title": "Parameters",
+      "type": "object"
+    }
+  },
+  "required": [
+    "contract_version",
+    "detector_id",
+    "detector_version",
+    "detector_kind",
+    "aoi",
+    "reference",
+    "observation",
+    "quality_ok",
+    "quality_notes",
+    "analysed_area_ha",
+    "changed_area_ha",
+    "findings",
+    "artifacts"
+  ],
+  "title": "PipelineResult",
+  "type": "object",
+  "$comment": "sentinel_ml PipelineResult contract v1.0 (generated)"
+}

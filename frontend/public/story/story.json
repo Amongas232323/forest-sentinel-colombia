@@ -1,0 +1,44 @@
+{
+  "region": "Corredor San José del Guaviare – Charras",
+  "territory": "Guaviare",
+  "bounds": [
+    -72.80035,
+    2.36549,
+    -72.74264,
+    2.42356
+  ],
+  "reference": {
+    "scenes": [
+      "S2A_T18NYH_20240224T151732_L2A",
+      "S2B_T18NYH_20240110T151746_L2A",
+      "S2B_T18NYH_20240219T151955_L2A",
+      "S2B_T18NYH_20240229T151717_L2A"
+    ],
+    "last": "2024-02-29T15:22:25.050000+00:00"
+  },
+  "observation": {
+    "scenes": [
+      "S2A_T18NYH_20250109T151715_L2A",
+      "S2B_T18NYH_20250203T151819_L2A",
+      "S2B_T18NYH_20250213T151723_L2A",
+      "S2C_T18NYH_20250129T151856_L2A"
+    ],
+    "last": "2025-02-13T15:22:31.176000+00:00"
+  },
+  "finding": {
+    "area_ha": 14.91,
+    "centroid": [
+      -72.789462,
+      2.39446
+    ],
+    "severity": "priority",
+    "signal": "vegetation_loss",
+    "mean_ndvi_drop": 0.369,
+    "mean_nbr_drop": 0.626,
+    "mean_score": 0.825
+  },
+  "detector": "spectral-baseline@1.0.0 (rule-based)",
+  "analysed_area_ha": 49461.4,
+  "findings_total": 46,
+  "attribution": "Contiene información modificada de Copernicus Sentinel (2024–2025), procesada por Forest Sentinel."
+}

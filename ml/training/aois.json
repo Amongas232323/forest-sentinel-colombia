@@ -1,0 +1,16 @@
+{
+  "description": "Areas of interest for weakly-supervised training. Geographic split: test AOIs are never used for training or threshold selection. Hotspots of the Colombian Amazon deforestation arc plus a low-deforestation AOI (Puerto Nariño, Amazonas) to measure false positives.",
+  "reference": "2022-12-01/2023-03-15",
+  "observation": "2023-12-01/2024-03-15",
+  "positive_year": 23,
+  "aois": [
+    { "name": "guaviare-charras", "bbox": [-72.80, 2.30, -72.65, 2.45], "split": "train" },
+    { "name": "guaviare-calamar", "bbox": [-72.75, 1.85, -72.60, 2.00], "split": "train" },
+    { "name": "guaviare-elretorno", "bbox": [-72.75, 2.10, -72.60, 2.25], "split": "train" },
+    { "name": "meta-tinigua", "bbox": [-74.25, 2.15, -74.10, 2.30], "split": "train" },
+    { "name": "caqueta-chaira", "bbox": [-74.95, 1.20, -74.80, 1.35], "split": "train" },
+    { "name": "meta-macarena", "bbox": [-73.95, 2.45, -73.80, 2.60], "split": "val" },
+    { "name": "caqueta-sanvicente", "bbox": [-74.60, 1.75, -74.45, 1.90], "split": "test" },
+    { "name": "amazonas-puertonarino", "bbox": [-70.30, -4.00, -70.15, -3.85], "split": "test" }
+  ]
+}

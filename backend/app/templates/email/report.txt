@@ -1,0 +1,5 @@
+FOREST SENTINEL — {{ title }}
+
+{{ sender }} te compartió un informe con {{ alert_count }} hallazgo(s). Va adjunto a este correo.
+
+Los hallazgos son detecciones automáticas que requieren verificación en campo antes de considerarse deforestación confirmada.

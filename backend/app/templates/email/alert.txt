@@ -1,0 +1,16 @@
+FOREST SENTINEL — {{ severity_label }} ({{ alert.code }})
+
+{{ alert.explanation.headline }}
+
+{{ alert.explanation.summary }}
+{{ alert.explanation.area_text }}
+Lugar: {{ alert.region_name }} · {{ alert.territory_name }}
+Coordenadas: {{ "%.5f"|format(alert.centroid[1]) }}, {{ "%.5f"|format(alert.centroid[0]) }}
+
+{{ alert.explanation.confidence_text }}
+{{ alert.explanation.caveat }}
+
+Revisar: {{ web_url }}/app/alerts/{{ alert.id }}
+{% if unsubscribe_url %}
+Dejar de recibir notificaciones: {{ unsubscribe_url }}
+{% endif %}

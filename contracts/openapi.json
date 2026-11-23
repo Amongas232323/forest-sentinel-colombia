@@ -1,0 +1,4774 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Forest Sentinel API",
+    "description": "Detección temprana de cambios de cobertura forestal en Guaviare, Sierra Nevada de Santa Marta, Cundinamarca y Amazonas.",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/v1/auth/register": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Register",
+        "operationId": "register_api_v1_auth_register_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Login",
+        "operationId": "login_api_v1_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/refresh": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Refresh",
+        "operationId": "refresh_api_v1_auth_refresh_post",
+        "parameters": [
+          {
+            "name": "fs_refresh",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Fs Refresh"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenOut"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No hay sesión (visitante anónimo)"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/logout": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Logout",
+        "operationId": "logout_api_v1_auth_logout_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/auth/logout-all": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Logout All",
+        "operationId": "logout_all_api_v1_auth_logout_all_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/auth/me": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Me",
+        "operationId": "me_api_v1_auth_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserOut"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/auth/password/forgot": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Forgot Password",
+        "operationId": "forgot_password_api_v1_auth_password_forgot_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForgotPasswordIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/password/reset": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Reset Password",
+        "operationId": "reset_password_api_v1_auth_password_reset_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/password/change": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Change Password",
+        "operationId": "change_password_api_v1_auth_password_change_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/territories": {
+      "get": {
+        "tags": [
+          "monitoring"
+        ],
+        "summary": "List Territories",
+        "operationId": "list_territories_api_v1_territories_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/TerritoryOut"
+                  },
+                  "type": "array",
+                  "title": "Response List Territories Api V1 Territories Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/territories/public": {
+      "get": {
+        "tags": [
+          "monitoring"
+        ],
+        "summary": "Territorios en alcance (sin autenticación, para la portada)",
+        "operationId": "public_territories_api_v1_territories_public_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/TerritoryOut"
+                  },
+                  "type": "array",
+                  "title": "Response Public Territories Api V1 Territories Public Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/territories/geometries": {
+      "get": {
+        "tags": [
+          "monitoring"
+        ],
+        "summary": "Territory Geometries",
+        "description": "Límites públicos simplificados (ODbL) que usan el mapa y el globo 3D.",
+        "operationId": "territory_geometries_api_v1_territories_geometries_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/TerritoryGeometryOut"
+                  },
+                  "type": "array",
+                  "title": "Response Territory Geometries Api V1 Territories Geometries Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/regions": {
+      "get": {
+        "tags": [
+          "monitoring"
+        ],
+        "summary": "List Regions",
+        "operationId": "list_regions_api_v1_regions_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "territory",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 64
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Territory"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RegionOut"
+                  },
+                  "title": "Response List Regions Api V1 Regions Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "monitoring"
+        ],
+        "summary": "Create Region",
+        "operationId": "create_region_api_v1_regions_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegionCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/regions/{region_id}": {
+      "get": {
+        "tags": [
+          "monitoring"
+        ],
+        "summary": "Get Region",
+        "operationId": "get_region_api_v1_regions__region_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "region_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Region Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "monitoring"
+        ],
+        "summary": "Update Region",
+        "operationId": "update_region_api_v1_regions__region_id__patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "region_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Region Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegionUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "monitoring"
+        ],
+        "summary": "Delete Region",
+        "operationId": "delete_region_api_v1_regions__region_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "region_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Region Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/regions/{region_id}/scenes": {
+      "get": {
+        "tags": [
+          "monitoring"
+        ],
+        "summary": "Imágenes Sentinel-2 disponibles (consulta en vivo al catálogo STAC)",
+        "operationId": "available_scenes_api_v1_regions__region_id__scenes_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "region_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Region Id"
+            }
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "title": "Start"
+            }
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "title": "End"
+            }
+          },
+          {
+            "name": "max_cloud",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "maximum": 100,
+              "minimum": 0,
+              "default": 60,
+              "title": "Max Cloud"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SceneOut"
+                  },
+                  "title": "Response Available Scenes Api V1 Regions  Region Id  Scenes Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/regions/{region_id}/jobs": {
+      "post": {
+        "tags": [
+          "monitoring"
+        ],
+        "summary": "Submit Job",
+        "operationId": "submit_job_api_v1_regions__region_id__jobs_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "region_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Region Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/jobs": {
+      "get": {
+        "tags": [
+          "monitoring"
+        ],
+        "summary": "List Jobs",
+        "operationId": "list_jobs_api_v1_jobs_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "region_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Region Id"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Page Size"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_JobOut_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/jobs/{job_id}": {
+      "get": {
+        "tags": [
+          "monitoring"
+        ],
+        "summary": "Get Job",
+        "operationId": "get_job_api_v1_jobs__job_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Job Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/results/{result_id}": {
+      "get": {
+        "tags": [
+          "monitoring"
+        ],
+        "summary": "Get Result",
+        "operationId": "get_result_api_v1_results__result_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "result_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Result Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/results/{result_id}/polygons": {
+      "get": {
+        "tags": [
+          "monitoring"
+        ],
+        "summary": "Polígonos de cambio (GeoJSON FeatureCollection)",
+        "operationId": "result_polygons_api_v1_results__result_id__polygons_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "result_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Result Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Result Polygons Api V1 Results  Result Id  Polygons Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/sources": {
+      "get": {
+        "tags": [
+          "monitoring"
+        ],
+        "summary": "List Sources",
+        "operationId": "list_sources_api_v1_sources_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SourceOut"
+                  },
+                  "type": "array",
+                  "title": "Response List Sources Api V1 Sources Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/alerts": {
+      "get": {
+        "tags": [
+          "alerts"
+        ],
+        "summary": "List Alerts",
+        "operationId": "list_alerts_api_v1_alerts_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Page Size"
+            }
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "recent",
+                "severity",
+                "area"
+              ],
+              "type": "string",
+              "default": "recent",
+              "title": "Order"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AlertStatus"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "name": "severity",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Severity"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Severity"
+            }
+          },
+          {
+            "name": "territory",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 64,
+                  "pattern": "^[a-z0-9-]+$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Territory"
+            }
+          },
+          {
+            "name": "region_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Region Id"
+            }
+          },
+          {
+            "name": "date_from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Date From"
+            }
+          },
+          {
+            "name": "date_to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Date To"
+            }
+          },
+          {
+            "name": "bbox",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^-?\\d+(\\.\\d+)?(,-?\\d+(\\.\\d+)?){3}$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Bbox"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_AlertOut_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/alerts/geojson": {
+      "get": {
+        "tags": [
+          "alerts"
+        ],
+        "summary": "Alertas como GeoJSON (para el mapa)",
+        "operationId": "alerts_geojson_api_v1_alerts_geojson_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AlertStatus"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "name": "severity",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Severity"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Severity"
+            }
+          },
+          {
+            "name": "territory",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 64,
+                  "pattern": "^[a-z0-9-]+$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Territory"
+            }
+          },
+          {
+            "name": "region_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Region Id"
+            }
+          },
+          {
+            "name": "date_from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Date From"
+            }
+          },
+          {
+            "name": "date_to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Date To"
+            }
+          },
+          {
+            "name": "bbox",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^-?\\d+(\\.\\d+)?(,-?\\d+(\\.\\d+)?){3}$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Bbox"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Alerts Geojson Api V1 Alerts Geojson Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/alerts/{alert_id}": {
+      "get": {
+        "tags": [
+          "alerts"
+        ],
+        "summary": "Get Alert",
+        "operationId": "get_alert_api_v1_alerts__alert_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "alert_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Alert Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlertDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/alerts/{alert_id}/status": {
+      "patch": {
+        "tags": [
+          "alerts"
+        ],
+        "summary": "Update Status",
+        "operationId": "update_status_api_v1_alerts__alert_id__status_patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "alert_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Alert Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AlertStatusUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlertDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/alerts/{alert_id}/comments": {
+      "post": {
+        "tags": [
+          "alerts"
+        ],
+        "summary": "Add Comment",
+        "operationId": "add_comment_api_v1_alerts__alert_id__comments_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "alert_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Alert Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AlertCommentIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlertEventOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/health": {
+      "get": {
+        "tags": [
+          "system"
+        ],
+        "summary": "Health",
+        "operationId": "health_api_v1_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Health Api V1 Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/health/ready": {
+      "get": {
+        "tags": [
+          "system"
+        ],
+        "summary": "Ready",
+        "operationId": "ready_api_v1_health_ready_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Ready Api V1 Health Ready Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/stats/overview": {
+      "get": {
+        "tags": [
+          "stats"
+        ],
+        "summary": "Overview",
+        "operationId": "overview_api_v1_stats_overview_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OverviewOut"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/reports": {
+      "get": {
+        "tags": [
+          "reports"
+        ],
+        "summary": "List Reports",
+        "operationId": "list_reports_api_v1_reports_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ReportOut"
+                  },
+                  "type": "array",
+                  "title": "Response List Reports Api V1 Reports Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "reports"
+        ],
+        "summary": "Create Report",
+        "operationId": "create_report_api_v1_reports_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/reports/{report_id}/download": {
+      "get": {
+        "tags": [
+          "reports"
+        ],
+        "summary": "Download Report",
+        "operationId": "download_report_api_v1_reports__report_id__download_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "report_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Report Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reports/{report_id}/email": {
+      "post": {
+        "tags": [
+          "reports"
+        ],
+        "summary": "Email Report",
+        "operationId": "email_report_api_v1_reports__report_id__email_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "report_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Report Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportEmailIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NotificationOut"
+                  },
+                  "title": "Response Email Report Api V1 Reports  Report Id  Email Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/me/preferences": {
+      "get": {
+        "tags": [
+          "me"
+        ],
+        "summary": "Get Preferences",
+        "operationId": "get_preferences_api_v1_me_preferences_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreferencesOut"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "me"
+        ],
+        "summary": "Put Preferences",
+        "operationId": "put_preferences_api_v1_me_preferences_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PreferencesIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreferencesOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/me/notifications": {
+      "get": {
+        "tags": [
+          "me"
+        ],
+        "summary": "My Notifications",
+        "operationId": "my_notifications_api_v1_me_notifications_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Page Size"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_NotificationOut_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/notifications/unsubscribe": {
+      "post": {
+        "tags": [
+          "me"
+        ],
+        "summary": "Unsubscribe",
+        "operationId": "unsubscribe_api_v1_notifications_unsubscribe_post",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 40,
+              "maxLength": 100,
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/users": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "List Users",
+        "operationId": "list_users_api_v1_users_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/UserOut"
+                  },
+                  "type": "array",
+                  "title": "Response List Users Api V1 Users Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/users/{user_id}": {
+      "patch": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Update User",
+        "operationId": "update_user_api_v1_users__user_id__patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "User Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserAdminUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/privacy/info": {
+      "get": {
+        "tags": [
+          "privacy"
+        ],
+        "summary": "Privacy Info",
+        "operationId": "privacy_info_api_v1_privacy_info_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrivacyInfoOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/privacy/consent": {
+      "post": {
+        "tags": [
+          "privacy"
+        ],
+        "summary": "Record Consent",
+        "operationId": "record_consent_api_v1_privacy_consent_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConsentIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConsentOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/privacy/consent/{subject_id}": {
+      "get": {
+        "tags": [
+          "privacy"
+        ],
+        "summary": "Latest Consent",
+        "operationId": "latest_consent_api_v1_privacy_consent__subject_id__get",
+        "parameters": [
+          {
+            "name": "subject_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Subject Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConsentOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/audit": {
+      "get": {
+        "tags": [
+          "audit"
+        ],
+        "summary": "Audit Log",
+        "operationId": "audit_log_api_v1_audit_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "action",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 64
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Action"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "default": 50,
+              "title": "Page Size"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_AuditOut_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AlertCommentIn": {
+        "properties": {
+          "comment": {
+            "type": "string",
+            "maxLength": 4000,
+            "minLength": 1,
+            "title": "Comment"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "comment"
+        ],
+        "title": "AlertCommentIn"
+      },
+      "AlertDetail": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "region_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Region Id"
+          },
+          "region_name": {
+            "type": "string",
+            "title": "Region Name"
+          },
+          "territory_slug": {
+            "type": "string",
+            "title": "Territory Slug"
+          },
+          "territory_name": {
+            "type": "string",
+            "title": "Territory Name"
+          },
+          "status": {
+            "$ref": "#/components/schemas/AlertStatus"
+          },
+          "severity": {
+            "$ref": "#/components/schemas/Severity"
+          },
+          "signal": {
+            "$ref": "#/components/schemas/ChangeSignal"
+          },
+          "confidence": {
+            "type": "number",
+            "title": "Confidence"
+          },
+          "area_ha": {
+            "type": "number",
+            "title": "Area Ha"
+          },
+          "centroid": {
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array",
+            "maxItems": 2,
+            "minItems": 2,
+            "title": "Centroid"
+          },
+          "reference_date": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Reference Date"
+          },
+          "observation_date": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Observation Date"
+          },
+          "first_detected_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "First Detected At"
+          },
+          "last_detected_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Last Detected At"
+          },
+          "detection_count": {
+            "type": "integer",
+            "title": "Detection Count"
+          },
+          "image_quality": {
+            "type": "number",
+            "title": "Image Quality"
+          },
+          "detector": {
+            "type": "string",
+            "title": "Detector"
+          },
+          "detector_kind": {
+            "type": "string",
+            "title": "Detector Kind"
+          },
+          "explanation": {
+            "$ref": "#/components/schemas/Explanation"
+          },
+          "geometry": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Geometry"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          },
+          "evidence": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EvidenceOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "result_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Result Id"
+          },
+          "mean_ndvi_drop": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mean Ndvi Drop"
+          },
+          "mean_nbr_drop": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mean Nbr Drop"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/AlertEventOut"
+            },
+            "type": "array",
+            "title": "Events"
+          },
+          "allowed_transitions": {
+            "items": {
+              "$ref": "#/components/schemas/AlertStatus"
+            },
+            "type": "array",
+            "title": "Allowed Transitions"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "code",
+          "region_id",
+          "region_name",
+          "territory_slug",
+          "territory_name",
+          "status",
+          "severity",
+          "signal",
+          "confidence",
+          "area_ha",
+          "centroid",
+          "reference_date",
+          "observation_date",
+          "first_detected_at",
+          "last_detected_at",
+          "detection_count",
+          "image_quality",
+          "detector",
+          "detector_kind",
+          "explanation",
+          "geometry",
+          "source",
+          "evidence",
+          "result_id",
+          "mean_ndvi_drop",
+          "mean_nbr_drop",
+          "events",
+          "allowed_transitions"
+        ],
+        "title": "AlertDetail"
+      },
+      "AlertEventOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "type": {
+            "$ref": "#/components/schemas/AlertEventType"
+          },
+          "from_status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AlertStatus"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "to_status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AlertStatus"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "comment": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comment"
+          },
+          "actor_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actor Name"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "type",
+          "from_status",
+          "to_status",
+          "comment",
+          "actor_name",
+          "created_at"
+        ],
+        "title": "AlertEventOut"
+      },
+      "AlertEventType": {
+        "type": "string",
+        "enum": [
+          "created",
+          "redetected",
+          "status_changed",
+          "comment",
+          "notified"
+        ],
+        "title": "AlertEventType"
+      },
+      "AlertFilters": {
+        "properties": {
+          "status": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/AlertStatus"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          },
+          "severity": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/Severity"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Severity"
+          },
+          "territory": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Territory"
+          },
+          "region_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Region Id"
+          },
+          "date_from": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date From"
+          },
+          "date_to": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date To"
+          },
+          "bbox": {
+            "anyOf": [
+              {
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "type": "array",
+                "maxItems": 4,
+                "minItems": 4
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bbox"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "AlertFilters"
+      },
+      "AlertOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "region_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Region Id"
+          },
+          "region_name": {
+            "type": "string",
+            "title": "Region Name"
+          },
+          "territory_slug": {
+            "type": "string",
+            "title": "Territory Slug"
+          },
+          "territory_name": {
+            "type": "string",
+            "title": "Territory Name"
+          },
+          "status": {
+            "$ref": "#/components/schemas/AlertStatus"
+          },
+          "severity": {
+            "$ref": "#/components/schemas/Severity"
+          },
+          "signal": {
+            "$ref": "#/components/schemas/ChangeSignal"
+          },
+          "confidence": {
+            "type": "number",
+            "title": "Confidence"
+          },
+          "area_ha": {
+            "type": "number",
+            "title": "Area Ha"
+          },
+          "centroid": {
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array",
+            "maxItems": 2,
+            "minItems": 2,
+            "title": "Centroid"
+          },
+          "reference_date": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Reference Date"
+          },
+          "observation_date": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Observation Date"
+          },
+          "first_detected_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "First Detected At"
+          },
+          "last_detected_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Last Detected At"
+          },
+          "detection_count": {
+            "type": "integer",
+            "title": "Detection Count"
+          },
+          "image_quality": {
+            "type": "number",
+            "title": "Image Quality"
+          },
+          "detector": {
+            "type": "string",
+            "title": "Detector"
+          },
+          "detector_kind": {
+            "type": "string",
+            "title": "Detector Kind"
+          },
+          "explanation": {
+            "$ref": "#/components/schemas/Explanation"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "code",
+          "region_id",
+          "region_name",
+          "territory_slug",
+          "territory_name",
+          "status",
+          "severity",
+          "signal",
+          "confidence",
+          "area_ha",
+          "centroid",
+          "reference_date",
+          "observation_date",
+          "first_detected_at",
+          "last_detected_at",
+          "detection_count",
+          "image_quality",
+          "detector",
+          "detector_kind",
+          "explanation"
+        ],
+        "title": "AlertOut"
+      },
+      "AlertStatus": {
+        "type": "string",
+        "enum": [
+          "new",
+          "pending_review",
+          "in_review",
+          "confirmed",
+          "dismissed",
+          "closed"
+        ],
+        "title": "AlertStatus"
+      },
+      "AlertStatusUpdate": {
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/AlertStatus"
+          },
+          "comment": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comment"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "title": "AlertStatusUpdate"
+      },
+      "AuditOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "actor_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actor Id"
+          },
+          "action": {
+            "type": "string",
+            "title": "Action"
+          },
+          "resource_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resource Type"
+          },
+          "resource_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resource Id"
+          },
+          "details": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Details"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "actor_id",
+          "action",
+          "resource_type",
+          "resource_id",
+          "details",
+          "created_at"
+        ],
+        "title": "AuditOut"
+      },
+      "ChangePasswordIn": {
+        "properties": {
+          "current_password": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Current Password"
+          },
+          "new_password": {
+            "type": "string",
+            "title": "New Password"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "current_password",
+          "new_password"
+        ],
+        "title": "ChangePasswordIn"
+      },
+      "ChangeSignal": {
+        "type": "string",
+        "enum": [
+          "vegetation_loss",
+          "possible_burn",
+          "possible_flooding"
+        ],
+        "title": "ChangeSignal"
+      },
+      "ConsentIn": {
+        "properties": {
+          "subject_id": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 16,
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "title": "Subject Id"
+          },
+          "functional": {
+            "type": "boolean",
+            "title": "Functional"
+          },
+          "analytics": {
+            "type": "boolean",
+            "title": "Analytics"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "subject_id",
+          "functional",
+          "analytics"
+        ],
+        "title": "ConsentIn"
+      },
+      "ConsentOut": {
+        "properties": {
+          "subject_id": {
+            "type": "string",
+            "title": "Subject Id"
+          },
+          "necessary": {
+            "type": "boolean",
+            "const": true,
+            "title": "Necessary",
+            "default": true
+          },
+          "functional": {
+            "type": "boolean",
+            "title": "Functional"
+          },
+          "analytics": {
+            "type": "boolean",
+            "title": "Analytics"
+          },
+          "policy_version": {
+            "type": "string",
+            "title": "Policy Version"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "subject_id",
+          "functional",
+          "analytics",
+          "policy_version",
+          "created_at"
+        ],
+        "title": "ConsentOut"
+      },
+      "EvidenceOut": {
+        "properties": {
+          "reference_url": {
+            "type": "string",
+            "title": "Reference Url"
+          },
+          "observation_url": {
+            "type": "string",
+            "title": "Observation Url"
+          },
+          "overlay_url": {
+            "type": "string",
+            "title": "Overlay Url"
+          },
+          "corners": {
+            "items": {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            "type": "array",
+            "title": "Corners"
+          },
+          "bounds": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "title": "Bounds"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "reference_url",
+          "observation_url",
+          "overlay_url",
+          "corners",
+          "bounds"
+        ],
+        "title": "EvidenceOut"
+      },
+      "Explanation": {
+        "properties": {
+          "headline": {
+            "type": "string",
+            "title": "Headline"
+          },
+          "summary": {
+            "type": "string",
+            "title": "Summary"
+          },
+          "area_text": {
+            "type": "string",
+            "title": "Area Text"
+          },
+          "confidence_text": {
+            "type": "string",
+            "title": "Confidence Text"
+          },
+          "caveat": {
+            "type": "string",
+            "title": "Caveat"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "headline",
+          "summary",
+          "area_text",
+          "confidence_text",
+          "caveat"
+        ],
+        "title": "Explanation",
+        "description": "Textos en lenguaje sencillo que comparten la UI y los correos (services/explain.py)."
+      },
+      "ForgotPasswordIn": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "email"
+        ],
+        "title": "ForgotPasswordIn"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "JobCreate": {
+        "properties": {
+          "reference_start": {
+            "type": "string",
+            "format": "date",
+            "title": "Reference Start"
+          },
+          "reference_end": {
+            "type": "string",
+            "format": "date",
+            "title": "Reference End"
+          },
+          "observation_start": {
+            "type": "string",
+            "format": "date",
+            "title": "Observation Start"
+          },
+          "observation_end": {
+            "type": "string",
+            "format": "date",
+            "title": "Observation End"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "reference_start",
+          "reference_end",
+          "observation_start",
+          "observation_end"
+        ],
+        "title": "JobCreate"
+      },
+      "JobOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "region_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Region Id"
+          },
+          "region_name": {
+            "type": "string",
+            "title": "Region Name"
+          },
+          "status": {
+            "$ref": "#/components/schemas/JobStatus"
+          },
+          "stage": {
+            "type": "string",
+            "title": "Stage"
+          },
+          "progress": {
+            "type": "number",
+            "title": "Progress"
+          },
+          "reference_start": {
+            "type": "string",
+            "format": "date",
+            "title": "Reference Start"
+          },
+          "reference_end": {
+            "type": "string",
+            "format": "date",
+            "title": "Reference End"
+          },
+          "observation_start": {
+            "type": "string",
+            "format": "date",
+            "title": "Observation Start"
+          },
+          "observation_end": {
+            "type": "string",
+            "format": "date",
+            "title": "Observation End"
+          },
+          "trigger": {
+            "type": "string",
+            "title": "Trigger"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "started_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Started At"
+          },
+          "finished_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finished At"
+          },
+          "result_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Result Id"
+          },
+          "detector": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detector"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "region_id",
+          "region_name",
+          "status",
+          "stage",
+          "progress",
+          "reference_start",
+          "reference_end",
+          "observation_start",
+          "observation_end",
+          "trigger",
+          "error",
+          "created_at",
+          "started_at",
+          "finished_at",
+          "result_id",
+          "detector"
+        ],
+        "title": "JobOut"
+      },
+      "JobStatus": {
+        "type": "string",
+        "enum": [
+          "queued",
+          "running",
+          "succeeded",
+          "failed",
+          "cancelled"
+        ],
+        "title": "JobStatus"
+      },
+      "LoginIn": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Password"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "title": "LoginIn"
+      },
+      "Message": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "title": "Message"
+      },
+      "ModelVersionOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "detector_id": {
+            "type": "string",
+            "title": "Detector Id"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version"
+          },
+          "kind": {
+            "type": "string",
+            "title": "Kind"
+          },
+          "metrics": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metrics"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "detector_id",
+          "version",
+          "kind",
+          "metrics",
+          "created_at"
+        ],
+        "title": "ModelVersionOut"
+      },
+      "NotificationFrequency": {
+        "type": "string",
+        "enum": [
+          "immediate",
+          "daily",
+          "weekly"
+        ],
+        "title": "NotificationFrequency"
+      },
+      "NotificationKind": {
+        "type": "string",
+        "enum": [
+          "alert",
+          "digest",
+          "report",
+          "password_reset"
+        ],
+        "title": "NotificationKind"
+      },
+      "NotificationOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/NotificationKind"
+          },
+          "status": {
+            "$ref": "#/components/schemas/NotificationStatus"
+          },
+          "subject": {
+            "type": "string",
+            "title": "Subject"
+          },
+          "to_email": {
+            "type": "string",
+            "title": "To Email"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "sent_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sent At"
+          },
+          "alert_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Alert Id"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "status",
+          "subject",
+          "to_email",
+          "created_at",
+          "sent_at",
+          "alert_id"
+        ],
+        "title": "NotificationOut"
+      },
+      "NotificationStatus": {
+        "type": "string",
+        "enum": [
+          "pending",
+          "sent",
+          "failed",
+          "skipped"
+        ],
+        "title": "NotificationStatus"
+      },
+      "OverviewOut": {
+        "properties": {
+          "monitored_area_km2": {
+            "type": "number",
+            "title": "Monitored Area Km2"
+          },
+          "region_count": {
+            "type": "integer",
+            "title": "Region Count"
+          },
+          "active_region_count": {
+            "type": "integer",
+            "title": "Active Region Count"
+          },
+          "changed_area_ha": {
+            "type": "number",
+            "title": "Changed Area Ha"
+          },
+          "alerts_pending": {
+            "type": "integer",
+            "title": "Alerts Pending"
+          },
+          "alerts_confirmed": {
+            "type": "integer",
+            "title": "Alerts Confirmed"
+          },
+          "alerts_total": {
+            "type": "integer",
+            "title": "Alerts Total"
+          },
+          "images_processed": {
+            "type": "integer",
+            "title": "Images Processed"
+          },
+          "jobs_running": {
+            "type": "integer",
+            "title": "Jobs Running"
+          },
+          "last_update": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Update"
+          },
+          "by_severity": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "By Severity"
+          },
+          "by_territory": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "By Territory"
+          },
+          "monthly_changed_ha": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Monthly Changed Ha"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "monitored_area_km2",
+          "region_count",
+          "active_region_count",
+          "changed_area_ha",
+          "alerts_pending",
+          "alerts_confirmed",
+          "alerts_total",
+          "images_processed",
+          "jobs_running",
+          "last_update",
+          "by_severity",
+          "by_territory",
+          "monthly_changed_ha"
+        ],
+        "title": "OverviewOut"
+      },
+      "Page_AlertOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AlertOut"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "page": {
+            "type": "integer",
+            "title": "Page"
+          },
+          "page_size": {
+            "type": "integer",
+            "title": "Page Size"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "page",
+          "page_size"
+        ],
+        "title": "Page[AlertOut]"
+      },
+      "Page_AuditOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AuditOut"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "page": {
+            "type": "integer",
+            "title": "Page"
+          },
+          "page_size": {
+            "type": "integer",
+            "title": "Page Size"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "page",
+          "page_size"
+        ],
+        "title": "Page[AuditOut]"
+      },
+      "Page_JobOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/JobOut"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "page": {
+            "type": "integer",
+            "title": "Page"
+          },
+          "page_size": {
+            "type": "integer",
+            "title": "Page Size"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "page",
+          "page_size"
+        ],
+        "title": "Page[JobOut]"
+      },
+      "Page_NotificationOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/NotificationOut"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "page": {
+            "type": "integer",
+            "title": "Page"
+          },
+          "page_size": {
+            "type": "integer",
+            "title": "Page Size"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "page",
+          "page_size"
+        ],
+        "title": "Page[NotificationOut]"
+      },
+      "PolygonGeometry": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "Polygon",
+              "MultiPolygon"
+            ],
+            "title": "Type"
+          },
+          "coordinates": {
+            "items": {},
+            "type": "array",
+            "title": "Coordinates"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "type",
+          "coordinates"
+        ],
+        "title": "PolygonGeometry",
+        "description": "GeoJSON Polygon/MultiPolygon en EPSG:4326, validado en el servidor."
+      },
+      "PreferencesIn": {
+        "properties": {
+          "notify_email": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "email"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notify Email"
+          },
+          "notifications_enabled": {
+            "type": "boolean",
+            "title": "Notifications Enabled"
+          },
+          "min_severity": {
+            "$ref": "#/components/schemas/Severity"
+          },
+          "frequency": {
+            "$ref": "#/components/schemas/NotificationFrequency"
+          },
+          "region_ids": {
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "type": "array",
+            "maxItems": 200,
+            "title": "Region Ids"
+          },
+          "signals": {
+            "items": {
+              "$ref": "#/components/schemas/ChangeSignal"
+            },
+            "type": "array",
+            "title": "Signals"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "notifications_enabled",
+          "min_severity",
+          "frequency"
+        ],
+        "title": "PreferencesIn"
+      },
+      "PreferencesOut": {
+        "properties": {
+          "notify_email": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "email"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notify Email"
+          },
+          "notifications_enabled": {
+            "type": "boolean",
+            "title": "Notifications Enabled"
+          },
+          "min_severity": {
+            "$ref": "#/components/schemas/Severity"
+          },
+          "frequency": {
+            "$ref": "#/components/schemas/NotificationFrequency"
+          },
+          "region_ids": {
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "type": "array",
+            "maxItems": 200,
+            "title": "Region Ids"
+          },
+          "signals": {
+            "items": {
+              "$ref": "#/components/schemas/ChangeSignal"
+            },
+            "type": "array",
+            "title": "Signals"
+          },
+          "effective_email": {
+            "type": "string",
+            "title": "Effective Email"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "notifications_enabled",
+          "min_severity",
+          "frequency",
+          "effective_email"
+        ],
+        "title": "PreferencesOut"
+      },
+      "PrivacyInfoOut": {
+        "properties": {
+          "controller_name": {
+            "type": "string",
+            "title": "Controller Name"
+          },
+          "controller_id": {
+            "type": "string",
+            "title": "Controller Id"
+          },
+          "contact_email": {
+            "type": "string",
+            "title": "Contact Email"
+          },
+          "policy_version": {
+            "type": "string",
+            "title": "Policy Version"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "controller_name",
+          "controller_id",
+          "contact_email",
+          "policy_version"
+        ],
+        "title": "PrivacyInfoOut"
+      },
+      "RegionCreate": {
+        "properties": {
+          "territory_slug": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 2,
+            "pattern": "^[a-z0-9-]+$",
+            "title": "Territory Slug"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 3,
+            "title": "Name"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 2000,
+            "title": "Description",
+            "default": ""
+          },
+          "geometry": {
+            "$ref": "#/components/schemas/PolygonGeometry"
+          },
+          "cadence_days": {
+            "type": "integer",
+            "maximum": 365.0,
+            "minimum": 5.0,
+            "title": "Cadence Days",
+            "default": 30
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "territory_slug",
+          "name",
+          "geometry"
+        ],
+        "title": "RegionCreate"
+      },
+      "RegionOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "territory_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Territory Id"
+          },
+          "territory_slug": {
+            "type": "string",
+            "title": "Territory Slug"
+          },
+          "territory_name": {
+            "type": "string",
+            "title": "Territory Name"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "area_km2": {
+            "type": "number",
+            "title": "Area Km2"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active"
+          },
+          "cadence_days": {
+            "type": "integer",
+            "title": "Cadence Days"
+          },
+          "last_run_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Run At"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "centroid": {
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array",
+            "maxItems": 2,
+            "minItems": 2,
+            "title": "Centroid"
+          },
+          "bbox": {
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array",
+            "maxItems": 4,
+            "minItems": 4,
+            "title": "Bbox"
+          },
+          "geometry": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Geometry"
+          },
+          "open_alerts": {
+            "type": "integer",
+            "title": "Open Alerts",
+            "default": 0
+          },
+          "last_job_status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/JobStatus"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "territory_id",
+          "territory_slug",
+          "territory_name",
+          "name",
+          "description",
+          "area_km2",
+          "is_active",
+          "cadence_days",
+          "last_run_at",
+          "created_at",
+          "centroid",
+          "bbox",
+          "geometry"
+        ],
+        "title": "RegionOut"
+      },
+      "RegionUpdate": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120,
+                "minLength": 3
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "cadence_days": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 365.0,
+                "minimum": 5.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cadence Days"
+          },
+          "is_active": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Active"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "RegionUpdate"
+      },
+      "RegisterIn": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "full_name": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Full Name"
+          },
+          "password": {
+            "type": "string",
+            "title": "Password"
+          },
+          "accept_privacy": {
+            "type": "boolean",
+            "const": true,
+            "title": "Accept Privacy",
+            "description": "Aceptación explícita de la política de tratamiento de datos"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "email",
+          "full_name",
+          "password",
+          "accept_privacy"
+        ],
+        "title": "RegisterIn"
+      },
+      "ReportCreate": {
+        "properties": {
+          "format": {
+            "$ref": "#/components/schemas/ReportFormat"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 3,
+            "title": "Title",
+            "default": "Informe de hallazgos"
+          },
+          "filters": {
+            "$ref": "#/components/schemas/AlertFilters"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "format"
+        ],
+        "title": "ReportCreate"
+      },
+      "ReportEmailIn": {
+        "properties": {
+          "to": {
+            "items": {
+              "type": "string",
+              "format": "email"
+            },
+            "type": "array",
+            "maxItems": 10,
+            "minItems": 1,
+            "title": "To"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "to"
+        ],
+        "title": "ReportEmailIn"
+      },
+      "ReportFormat": {
+        "type": "string",
+        "enum": [
+          "csv",
+          "pdf"
+        ],
+        "title": "ReportFormat"
+      },
+      "ReportOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "format": {
+            "$ref": "#/components/schemas/ReportFormat"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "filters": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Filters"
+          },
+          "size_bytes": {
+            "type": "integer",
+            "title": "Size Bytes"
+          },
+          "alert_count": {
+            "type": "integer",
+            "title": "Alert Count"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "download_url": {
+            "type": "string",
+            "title": "Download Url"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "format",
+          "title",
+          "filters",
+          "size_bytes",
+          "alert_count",
+          "created_at",
+          "download_url"
+        ],
+        "title": "ReportOut"
+      },
+      "ResetPasswordIn": {
+        "properties": {
+          "token": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 20,
+            "title": "Token"
+          },
+          "password": {
+            "type": "string",
+            "title": "Password"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "token",
+          "password"
+        ],
+        "title": "ResetPasswordIn"
+      },
+      "ResultOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "job_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Job Id"
+          },
+          "region_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Region Id"
+          },
+          "quality_ok": {
+            "type": "boolean",
+            "title": "Quality Ok"
+          },
+          "quality_notes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Quality Notes"
+          },
+          "analysed_area_ha": {
+            "type": "number",
+            "title": "Analysed Area Ha"
+          },
+          "changed_area_ha": {
+            "type": "number",
+            "title": "Changed Area Ha"
+          },
+          "reference_valid_fraction": {
+            "type": "number",
+            "title": "Reference Valid Fraction"
+          },
+          "observation_valid_fraction": {
+            "type": "number",
+            "title": "Observation Valid Fraction"
+          },
+          "reference_first": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Reference First"
+          },
+          "reference_last": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Reference Last"
+          },
+          "observation_first": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Observation First"
+          },
+          "observation_last": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Observation Last"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "model": {
+            "$ref": "#/components/schemas/ModelVersionOut"
+          },
+          "evidence": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EvidenceOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "polygon_count": {
+            "type": "integer",
+            "title": "Polygon Count"
+          },
+          "scenes": {
+            "items": {
+              "$ref": "#/components/schemas/SceneOut"
+            },
+            "type": "array",
+            "title": "Scenes"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "job_id",
+          "region_id",
+          "quality_ok",
+          "quality_notes",
+          "analysed_area_ha",
+          "changed_area_ha",
+          "reference_valid_fraction",
+          "observation_valid_fraction",
+          "reference_first",
+          "reference_last",
+          "observation_first",
+          "observation_last",
+          "created_at",
+          "model",
+          "evidence",
+          "polygon_count",
+          "scenes"
+        ],
+        "title": "ResultOut"
+      },
+      "Role": {
+        "type": "string",
+        "enum": [
+          "admin",
+          "analyst",
+          "observer"
+        ],
+        "title": "Role"
+      },
+      "SceneOut": {
+        "properties": {
+          "scene_id": {
+            "type": "string",
+            "title": "Scene Id"
+          },
+          "collection": {
+            "type": "string",
+            "title": "Collection"
+          },
+          "acquired_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Acquired At"
+          },
+          "cloud_cover": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cloud Cover"
+          },
+          "tile_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tile Id"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "scene_id",
+          "collection",
+          "acquired_at",
+          "cloud_cover",
+          "tile_id"
+        ],
+        "title": "SceneOut"
+      },
+      "Severity": {
+        "type": "string",
+        "enum": [
+          "low",
+          "moderate",
+          "high",
+          "priority"
+        ],
+        "title": "Severity"
+      },
+      "SourceOut": {
+        "properties": {
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "provider": {
+            "type": "string",
+            "title": "Provider"
+          },
+          "collection": {
+            "type": "string",
+            "title": "Collection"
+          },
+          "license": {
+            "type": "string",
+            "title": "License"
+          },
+          "requires_credentials": {
+            "type": "boolean",
+            "title": "Requires Credentials"
+          },
+          "enabled": {
+            "type": "boolean",
+            "title": "Enabled"
+          },
+          "notes": {
+            "type": "string",
+            "title": "Notes"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "slug",
+          "name",
+          "provider",
+          "collection",
+          "license",
+          "requires_credentials",
+          "enabled",
+          "notes"
+        ],
+        "title": "SourceOut"
+      },
+      "TerritoryGeometryOut": {
+        "properties": {
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "geometry": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Geometry"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "slug",
+          "geometry"
+        ],
+        "title": "TerritoryGeometryOut"
+      },
+      "TerritoryOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "kind": {
+            "type": "string",
+            "title": "Kind"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "area_km2": {
+            "type": "number",
+            "title": "Area Km2"
+          },
+          "attribution": {
+            "type": "string",
+            "title": "Attribution"
+          },
+          "license": {
+            "type": "string",
+            "title": "License"
+          },
+          "centroid": {
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array",
+            "maxItems": 2,
+            "minItems": 2,
+            "title": "Centroid"
+          },
+          "bbox": {
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array",
+            "maxItems": 4,
+            "minItems": 4,
+            "title": "Bbox"
+          },
+          "region_count": {
+            "type": "integer",
+            "title": "Region Count",
+            "default": 0
+          },
+          "open_alerts": {
+            "type": "integer",
+            "title": "Open Alerts",
+            "default": 0
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "slug",
+          "name",
+          "kind",
+          "description",
+          "area_km2",
+          "attribution",
+          "license",
+          "centroid",
+          "bbox"
+        ],
+        "title": "TerritoryOut"
+      },
+      "TokenOut": {
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "title": "Access Token"
+          },
+          "token_type": {
+            "type": "string",
+            "const": "bearer",
+            "title": "Token Type",
+            "default": "bearer"
+          },
+          "expires_in": {
+            "type": "integer",
+            "title": "Expires In"
+          },
+          "user": {
+            "$ref": "#/components/schemas/UserOut"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "access_token",
+          "expires_in",
+          "user"
+        ],
+        "title": "TokenOut"
+      },
+      "UserAdminUpdate": {
+        "properties": {
+          "role": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Role"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "is_active": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Active"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "UserAdminUpdate"
+      },
+      "UserOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "full_name": {
+            "type": "string",
+            "title": "Full Name"
+          },
+          "role": {
+            "$ref": "#/components/schemas/Role"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "last_login_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Login At"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "email",
+          "full_name",
+          "role",
+          "is_active",
+          "created_at",
+          "last_login_at"
+        ],
+        "title": "UserOut"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}

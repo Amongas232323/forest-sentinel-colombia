@@ -1,0 +1,8 @@
+{% extends "_layout.html" %}
+{% block body %}
+<p style="margin:0 0 12px 0;font-family:'Courier New',monospace;font-size:12px;letter-spacing:2px;color:#91C77A;">INFORME</p>
+<h1 style="margin:0 0 16px 0;font-size:24px;line-height:30px;color:#F2F3EA;">{{ title }}</h1>
+<p style="margin:0 0 20px 0;font-size:16px;line-height:24px;color:#F2F3EA;">{{ sender }} te compartió un informe con {{ alert_count }} {{ "hallazgo" if alert_count == 1 else "hallazgos" }}. Lo encontrarás adjunto a este correo.</p>
+<p style="margin:0;font-size:14px;line-height:21px;color:#A5B0A7;">Los hallazgos son detecciones automáticas que requieren verificación en campo antes de considerarse deforestación confirmada.</p>
+{% endblock %}
+{% block footer %}Informe enviado desde Forest Sentinel. Responsable del tratamiento: {{ controller }}.{% endblock %}

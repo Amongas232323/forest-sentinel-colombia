@@ -1,0 +1,9 @@
+FOREST SENTINEL — Resumen {{ period_label }}
+
+{{ alerts|length }} hallazgo(s) nuevo(s) desde el {{ since }}:
+{% for a in alerts %}
+- {{ a.explanation.headline }} — {{ a.region_name }}, {{ "%.1f"|format(a.area_ha) }} ha ({{ a.code }})
+{% endfor %}
+
+Centro de alertas: {{ web_url }}/app/alerts
+{% if unsubscribe_url %}Dejar de recibir notificaciones: {{ unsubscribe_url }}{% endif %}

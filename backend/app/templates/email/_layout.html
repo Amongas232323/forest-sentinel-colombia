@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>{{ subject|default("Forest Sentinel") }}</title>
+</head>
+<body style="margin:0;padding:0;background:#10251D;font-family:Helvetica,Arial,sans-serif;color:#F2F3EA;">
+  <div style="display:none;max-height:0;overflow:hidden;">{{ preheader|default("") }}</div>
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#10251D;">
+    <tr><td align="center" style="padding:32px 16px;">
+      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:600px;">
+        <tr><td style="padding:0 0 24px 0;">
+          <span style="font-family:'Courier New',monospace;font-size:12px;letter-spacing:3px;color:#91C77A;">● FOREST SENTINEL</span>
+        </td></tr>
+        <tr><td style="background:#111714;border:1px solid #183D2C;border-radius:16px;padding:32px 28px;">
+          {% block body %}{% endblock %}
+        </td></tr>
+        <tr><td style="padding:24px 4px;font-size:12px;line-height:18px;color:#A5B0A7;">
+          {% block footer %}
+          Recibes este correo porque tienes una cuenta en Forest Sentinel.
+          {% if unsubscribe_url %}<br><a href="{{ unsubscribe_url }}" style="color:#91C77A;">Dejar de recibir notificaciones</a>{% endif %}
+          <br>Responsable del tratamiento: {{ controller }}.
+          {% endblock %}
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>

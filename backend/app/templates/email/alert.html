@@ -1,0 +1,21 @@
+{% extends "_layout.html" %}
+{% block body %}
+{% set color = {"priority": "#D95D50", "high": "#E7AA43", "moderate": "#E7AA43", "low": "#91C77A"}[alert.severity] %}
+<p style="margin:0 0 12px 0;font-family:'Courier New',monospace;font-size:12px;letter-spacing:2px;color:{{ color }};">
+  ▲ {{ severity_label|upper }} · {{ alert.code }}
+</p>
+<h1 style="margin:0 0 16px 0;font-size:26px;line-height:32px;font-weight:700;color:#F2F3EA;">{{ alert.explanation.headline }}</h1>
+<p style="margin:0 0 20px 0;font-size:16px;line-height:24px;color:#F2F3EA;">{{ alert.explanation.summary }}</p>
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin:0 0 20px 0;">
+  <tr>
+    <td style="padding:14px 16px;background:#183D2C;border-radius:12px;">
+      <p style="margin:0 0 6px 0;font-size:16px;color:#F2F3EA;"><strong>{{ alert.explanation.area_text }}</strong></p>
+      <p style="margin:0 0 6px 0;font-size:14px;color:#A5B0A7;">Lugar: {{ alert.region_name }} · {{ alert.territory_name }}</p>
+      <p style="margin:0;font-family:'Courier New',monospace;font-size:13px;color:#A5B0A7;">{{ "%.5f"|format(alert.centroid[1]) }}°, {{ "%.5f"|format(alert.centroid[0]) }}°</p>
+    </td>
+  </tr>
+</table>
+<p style="margin:0 0 8px 0;font-size:14px;line-height:21px;color:#A5B0A7;">{{ alert.explanation.confidence_text }}</p>
+<p style="margin:0 0 24px 0;font-size:14px;line-height:21px;color:#A5B0A7;">{{ alert.explanation.caveat }}</p>
+<a href="{{ web_url }}/app/alerts/{{ alert.id }}" style="display:inline-block;background:#91C77A;color:#10251D;text-decoration:none;font-weight:700;padding:14px 22px;border-radius:999px;font-size:15px;">Revisar el hallazgo</a>
+{% endblock %}

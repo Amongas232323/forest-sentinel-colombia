@@ -1,0 +1,56 @@
+# ── Secretos ────────────────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+
+# ── Python ──────────────────────────────────────────────────────────────────
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+.coverage
+htmlcov/
+
+# ── Node / Next.js ──────────────────────────────────────────────────────────
+node_modules/
+.next/
+out/
+dist/
+build/
+coverage/
+*.tsbuildinfo
+npm-debug.log*
+
+# ── Datos pesados o generados ───────────────────────────────────────────────
+# Solo la carpeta data/ de la raíz (escenas, ejecuciones, logs). frontend/public/data/ SÍ se versiona.
+/data/
+ml/datasets/
+ml/checkpoints/*.pt
+ml/runs/
+*.tif
+*.tiff
+*.jp2
+*.log
+/reports/
+celerybeat-schedule*
+
+# ── Auditorías locales ──────────────────────────────────────────────────────────
+design-audit/
+
+# ── Sistema y editor ────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+*.swp
+.vscode/*
+!.vscode/settings.json
