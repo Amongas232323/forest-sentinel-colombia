@@ -30,8 +30,10 @@ export function MapView({ className, bounds = COLOMBIA_BOUNDS, onLoad, options, 
     let map: MLMap | null = null;
     let cleanup: void | (() => void);
     let cancelled = false;
-    void import("maplibre-gl").then(({ default: maplibregl }) => {
+    void import("maplibre-gl").then((maplibregl) => {
       if (cancelled || !container.current) return;
+      // El worker lo copia scripts/copy-maplibre-worker.mjs a public/vendor/ (Next no lo empaqueta).
+      maplibregl.setWorkerUrl("/vendor/maplibre-gl-worker.mjs");
       try {
         map = new maplibregl.Map({
           container: container.current,

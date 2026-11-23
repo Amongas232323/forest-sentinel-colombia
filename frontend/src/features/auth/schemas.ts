@@ -19,7 +19,7 @@ export const registerSchema = z
     email: z.string().trim().email("Escribe un correo válido."),
     password: passwordSchema,
     confirm: z.string(),
-    accept_privacy: z.literal(true, { errorMap: () => ({ message: "Debes aceptar la política para crear la cuenta." }) }),
+    accept_privacy: z.literal(true, { error: "Debes aceptar la política para crear la cuenta." }),
   })
   .refine((d) => d.password === d.confirm, { path: ["confirm"], message: "Las contraseñas no coinciden." });
 

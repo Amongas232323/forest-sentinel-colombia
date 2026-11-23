@@ -28,6 +28,7 @@ dist/
 build/
 coverage/
 *.tsbuildinfo
+frontend/public/vendor/
 npm-debug.log*
 
 # ── Datos pesados o generados ───────────────────────────────────────────────
