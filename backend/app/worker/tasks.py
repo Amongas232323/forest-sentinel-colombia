@@ -38,6 +38,19 @@ def send_digests(frequency: str) -> int:
         return notifications.send_digests(db, NotificationFrequency(frequency))
 
 
+@celery_app.task(name="app.worker.tasks.retry_failed_notifications")
+def retry_failed_notifications() -> int:
+    with get_sessionmaker()() as db:
+        return notifications.retry_failed(db)
+
+
+@celery_app.task(name="app.worker.tasks.recover_stale_jobs")
+def recover_stale_jobs() -> int:
+    """Marca como fallidos los análisis que quedaron en `running` porque el worker murió."""
+    with get_sessionmaker()() as db:
+        return len(jobs.fail_stale_jobs(db))
+
+
 @celery_app.task(name="app.worker.tasks.schedule_due_regions")
 def schedule_due_regions() -> int:
     """Crea trabajos programados para las regiones activas a las que ya les tocó según su frecuencia."""

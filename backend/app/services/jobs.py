@@ -14,7 +14,7 @@ from sentinel_ml.detectors import ChangeDetector, get_detector
 from sentinel_ml.grid import AOITooLargeError
 from sentinel_ml.pipeline import PipelineTimeoutError, run_pipeline
 from shapely.geometry import Point, Polygon, shape
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, joinedload
 
@@ -132,6 +132,42 @@ class _ProgressWriter:
             if job:
                 job.stage, job.progress = stage, min(max(fraction, 0.0), 1.0)
                 db.commit()
+
+
+STALE_JOB_MESSAGE = (
+    "El análisis se interrumpió porque el proceso que lo ejecutaba se detuvo. "
+    "Lánzalo de nuevo: los tiles que ya estaban listos se reutilizan."
+)
+
+
+def stale_job_cutoff_s() -> int:
+    """Segundos después de los cuales un trabajo en `running` ya no puede seguir vivo.
+
+    Celery mata la tarea en ``pipeline_max_runtime_s + 300`` (``task_time_limit`` en
+    worker/celery_app.py); le damos 5 min más de margen antes de darlo por muerto.
+    """
+    return get_settings().pipeline_max_runtime_s + 600
+
+
+def fail_stale_jobs(db: Session, now: datetime | None = None) -> list[uuid.UUID]:
+    """Marca como fallidos los trabajos que quedaron en `running` porque el worker murió.
+
+    Si el worker se cae a mitad de un análisis (falta de memoria, reinicio o el límite duro
+    de Celery), la tarea se vuelve a entregar pero ``execute_job`` la ignora porque el trabajo
+    ya está en `running`. Sin esto el trabajo se quedaba así para siempre y además bloqueaba
+    el monitoreo programado de su zona.
+    """
+    now = now or datetime.now(UTC)
+    cutoff = now - timedelta(seconds=stale_job_cutoff_s())
+    started = func.coalesce(ProcessingJob.started_at, ProcessingJob.created_at)
+    stale = db.scalars(
+        select(ProcessingJob).where(ProcessingJob.status == JobStatus.RUNNING, started < cutoff).with_for_update(skip_locked=True)
+    ).all()
+    for job in stale:
+        job.status, job.error, job.finished_at = JobStatus.FAILED, STALE_JOB_MESSAGE, now
+        log.warning("job_stale_failed", job_id=str(job.id), stage=job.stage, progress=job.progress)
+    db.commit()
+    return [job.id for job in stale]
 
 
 USER_ERRORS = {

@@ -82,6 +82,11 @@ class Settings(BaseSettings):
                 raise ValueError("JWT_SECRET must be set in production")
             if any(o.startswith("http://") for o in self.cors_origins):
                 raise ValueError("CORS origins must use https in production")
+            # Mailpit captura los correos y los marca como enviados, pero no le llegan a nadie.
+            if self.smtp_host.strip().lower() == "mailpit":
+                raise ValueError(
+                    "SMTP_HOST points to Mailpit in production: set DOCKER_SMTP_HOST (Docker) or SMTP_HOST to a real SMTP server"
+                )
         return self
 
     @property

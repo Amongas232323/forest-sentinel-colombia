@@ -20,6 +20,7 @@ cp .env.example .env
 | `POSTGRES_PASSWORD`, `REDIS_PASSWORD` | Aleatorias y distintas |
 | `CORS_ORIGINS`, `PUBLIC_WEB_URL` | `https://tu-dominio` |
 | `SMTP_*`, `MAIL_FROM` | Credenciales del proveedor; `SMTP_STARTTLS=true` o `SMTP_SSL=true` |
+| `DOCKER_SMTP_HOST` | Host SMTP real que usan los contenedores. **Obligatorio**: si queda en Mailpit, la API se niega a arrancar en producción |
 | `BOOTSTRAP_ADMIN_*` | Solo para el primer arranque; luego elimínalas |
 | `PRIVACY_CONTROLLER_*` | Datos reales del responsable del tratamiento |
 | `MODEL_CHECKPOINT` | Vacío (detector por reglas) o ruta a un checkpoint evaluado y aprobado |

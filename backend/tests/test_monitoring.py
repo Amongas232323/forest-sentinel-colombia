@@ -238,3 +238,28 @@ def test_overview_counts_come_from_data(client, db, observer_headers):
     assert data["alerts_total"] == 1 and data["alerts_pending"] == 1
     assert data["images_processed"] == 2
     assert {t["slug"]: t["open_alerts"] for t in data["by_territory"]}["guaviare"] == 1
+
+
+# ── Recuperación de análisis colgados ─────────────────────────────────────────
+
+
+def test_stale_running_job_is_marked_failed(db):
+    from datetime import UTC, datetime, timedelta
+
+    from factories import make_job
+
+    from app.models.enums import JobStatus
+    from app.services.jobs import STALE_JOB_MESSAGE, fail_stale_jobs, stale_job_cutoff_s
+
+    region = region_in(db)
+    job = make_job(db, region)  # make_job lo deja en running
+    job.started_at = datetime.now(UTC) - timedelta(seconds=60)
+    db.commit()
+    assert fail_stale_jobs(db) == []  # todavía puede estar corriendo de verdad
+
+    job.started_at = datetime.now(UTC) - timedelta(seconds=stale_job_cutoff_s() + 60)
+    db.commit()
+    assert fail_stale_jobs(db) == [job.id]
+    db.refresh(job)
+    assert job.status == JobStatus.FAILED and job.error == STALE_JOB_MESSAGE and job.finished_at is not None
+    assert fail_stale_jobs(db) == []  # no se toca dos veces

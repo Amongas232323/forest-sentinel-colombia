@@ -26,6 +26,9 @@ celery_app.conf.update(
     task_always_eager=settings.environment == "test",
     beat_schedule={
         "schedule-due-regions": {"task": "app.worker.tasks.schedule_due_regions", "schedule": crontab(minute=5)},
+        # Va antes del programador (minuto 5): así una zona con un análisis colgado vuelve a quedar libre.
+        "recover-stale-jobs": {"task": "app.worker.tasks.recover_stale_jobs", "schedule": crontab(minute="*/10")},
+        "retry-failed-notifications": {"task": "app.worker.tasks.retry_failed_notifications", "schedule": crontab(minute="*/15")},
         "daily-digest": {"task": "app.worker.tasks.send_digests", "schedule": crontab(hour=7, minute=0), "args": ["daily"]},
         "weekly-digest": {
             "task": "app.worker.tasks.send_digests",

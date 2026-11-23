@@ -284,10 +284,17 @@ def get_report_for(db: Session, report_id: uuid.UUID, user: User) -> tuple[Repor
     # Protección IDOR: solo el autor o un administrador pueden acceder a un reporte.
     if report.created_by_id != user.id and user.role != Role.ADMIN:
         raise NotFoundError("El informe no existe.")
-    path = (get_settings().reports_dir / report.file_name).resolve()
-    if get_settings().reports_dir.resolve() not in path.parents or not path.is_file():
+    path = report_path(report)
+    if path is None:
         raise NotFoundError("El archivo del informe ya no está disponible.")
     return report, path
+
+
+def report_path(report: Report) -> Path | None:
+    """Ruta del archivo del informe, solo si existe y está dentro de DATA_DIR/reports."""
+    base = get_settings().reports_dir.resolve()
+    path = (base / report.file_name).resolve()
+    return path if base in path.parents and path.is_file() else None
 
 
 def list_reports(db: Session, user: User) -> list[Report]:

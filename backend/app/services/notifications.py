@@ -129,20 +129,23 @@ def notify_new_alerts(db: Session, alert_ids: list[uuid.UUID]) -> int:
                 continue  # ya se le notificó sobre esta alerta
             row = db.get(Notification, new_id)
             assert row is not None
-            mail = mailer.OutgoingEmail(
-                to=row.to_email,
-                subject=row.subject,
-                template="alert",
-                context={
-                    "alert": payload.model_dump(mode="json"),
-                    "severity_label": SEVERITY_LABELS[alert.severity],
-                    "unsubscribe_url": unsubscribe_url(user.id),
-                    "subject": row.subject,
-                },
-                list_unsubscribe=unsubscribe_url(user.id),
-            )
-            sent += _deliver(db, row, mail)
+            sent += _deliver(db, row, _alert_mail(row, user, alert))
     return sent
+
+
+def _alert_mail(row: Notification, user: User, alert: Alert) -> mailer.OutgoingEmail:
+    return mailer.OutgoingEmail(
+        to=row.to_email,
+        subject=row.subject,
+        template="alert",
+        context={
+            "alert": alert_out(alert).model_dump(mode="json"),
+            "severity_label": SEVERITY_LABELS[alert.severity],
+            "unsubscribe_url": unsubscribe_url(user.id),
+            "subject": row.subject,
+        },
+        list_unsubscribe=unsubscribe_url(user.id),
+    )
 
 
 def send_digests(db: Session, frequency: NotificationFrequency, now: datetime | None = None) -> int:
@@ -157,6 +160,7 @@ def send_digests(db: Session, frequency: NotificationFrequency, now: datetime | 
             continue
         candidates = db.scalars(select(Alert.id).where(Alert.first_detected_at >= since, Alert.first_detected_at < now))
         alerts = [a for a in _load_alerts(db, candidates) if _matches(prefs, a)]
+        previous_digest_at = prefs.last_digest_at
         prefs.last_digest_at = now
         if not alerts:
             db.commit()
@@ -182,7 +186,13 @@ def send_digests(db: Session, frequency: NotificationFrequency, now: datetime | 
             },
             list_unsubscribe=unsubscribe_url(user.id),
         )
-        sent += _deliver(db, row, mail)
+        if _deliver(db, row, mail):
+            sent += 1
+        else:
+            # Si el envío falla devolvemos la fecha anterior: así el próximo resumen incluye
+            # estas alertas en vez de perderlas.
+            prefs.last_digest_at = previous_digest_at
+            db.commit()
     return sent
 
 
@@ -208,8 +218,6 @@ def send_password_reset(db: Session, user: User, token: str) -> None:
 
 def send_report(db: Session, report: Report, recipients: list[str], sender: User, content: bytes) -> list[Notification]:
     rows: list[Notification] = []
-    subtype = "pdf" if report.format.value == "pdf" else "csv"
-    maintype = "application" if subtype == "pdf" else "text"
     for to in recipients:
         row = Notification(
             user_id=sender.id,
@@ -220,16 +228,88 @@ def send_report(db: Session, report: Report, recipients: list[str], sender: User
         )
         db.add(row)
         db.commit()
-        mail = mailer.OutgoingEmail(
-            to=row.to_email,
-            subject=row.subject,
-            template="report",
-            context={"title": report.title, "sender": sender.full_name, "alert_count": report.alert_count},
-            attachments=[mailer.Attachment(report.file_name, content, maintype, subtype)],
-        )
-        _deliver(db, row, mail)
+        _deliver(db, row, _report_mail(row, report, sender, content))
         rows.append(row)
     return rows
+
+
+def _report_mail(row: Notification, report: Report, sender: User, content: bytes) -> mailer.OutgoingEmail:
+    subtype = "pdf" if report.format.value == "pdf" else "csv"
+    maintype = "application" if subtype == "pdf" else "text"
+    return mailer.OutgoingEmail(
+        to=row.to_email,
+        subject=row.subject,
+        template="report",
+        context={"title": report.title, "sender": sender.full_name, "alert_count": report.alert_count},
+        attachments=[mailer.Attachment(report.file_name, content, maintype, subtype)],
+    )
+
+
+# ── Reintentos ────────────────────────────────────────────────────────────────
+
+MAX_ATTEMPTS = 3
+RETRY_WINDOW = timedelta(hours=24)
+# Solo se reintentan los correos que se pueden volver a armar con lo que hay en la BD.
+# El de restablecer contraseña no: el token solo existe dentro del correo, y la persona
+# puede pedir otro. Los resúmenes no fallan en silencio: send_digests los incluye en el siguiente.
+RETRYABLE_KINDS = (NotificationKind.ALERT, NotificationKind.REPORT)
+
+
+def retry_failed(db: Session, now: datetime | None = None) -> int:
+    """Reintenta los correos fallidos de las últimas 24 h (máximo 3 intentos). Devuelve cuántos salieron."""
+    now = now or datetime.now(UTC)
+    ids = db.scalars(
+        select(Notification.id)
+        .where(
+            Notification.status == NotificationStatus.FAILED,
+            Notification.kind.in_(RETRYABLE_KINDS),
+            Notification.attempts < MAX_ATTEMPTS,
+            Notification.created_at >= now - RETRY_WINDOW,
+        )
+        .order_by(Notification.created_at)
+    ).all()
+    sent = 0
+    for notification_id in ids:
+        # Bloqueamos la fila mientras se reenvía: si dos workers corren esto a la vez, nadie manda doble.
+        row = db.scalar(
+            select(Notification)
+            .where(Notification.id == notification_id, Notification.status == NotificationStatus.FAILED)
+            .with_for_update(skip_locked=True)
+        )
+        if row is None:
+            db.rollback()
+            continue
+        mail, reason = _rebuild(db, row)
+        if mail is None:
+            row.status, row.error = NotificationStatus.SKIPPED, f"No se reintentó: {reason}"
+            db.commit()
+            continue
+        sent += _deliver(db, row, mail)
+    return sent
+
+
+def _rebuild(db: Session, row: Notification) -> tuple[mailer.OutgoingEmail | None, str]:
+    user = db.get(User, row.user_id) if row.user_id else None
+    if user is None:
+        return None, "el usuario ya no existe"
+    if row.kind == NotificationKind.ALERT:
+        alerts = _load_alerts(db, [row.alert_id]) if row.alert_id else []
+        prefs = user.preferences
+        if not alerts:
+            return None, "la alerta ya no existe"
+        # Respetamos las preferencias actuales: si la persona se dio de baja mientras tanto, no insistimos.
+        if not user.is_active or prefs is None or not prefs.notifications_enabled or not _matches(prefs, alerts[0]):
+            return None, "el usuario ya no quiere este aviso"
+        return _alert_mail(row, user, alerts[0]), ""
+    if row.kind == NotificationKind.REPORT:
+        from .reports import report_path  # import perezoso: reports carga reportlab
+
+        report = db.get(Report, row.report_id) if row.report_id else None
+        path = report_path(report) if report else None
+        if report is None or path is None:
+            return None, "el informe ya no está disponible"
+        return _report_mail(row, report, user, path.read_bytes()), ""
+    return None, "este tipo de correo no se reintenta"
 
 
 def unsubscribe(db: Session, token: str) -> bool:

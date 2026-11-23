@@ -199,3 +199,147 @@ def test_audit_log_records_actions(client, db, admin_headers):
     client.patch(f"/api/v1/users/{target.id}", headers=admin_headers, json={"role": "analyst"})
     r = client.get("/api/v1/audit?action=user.updated", headers=admin_headers)
     assert r.status_code == 200 and r.json()["total"] == 1
+
+
+# ── Reintentos de correo y arranque en producción ─────────────────────────────
+
+
+def _subscribe_immediate(db):  # type: ignore[no-untyped-def]
+    from app.models.enums import NotificationFrequency
+
+    u = make_user(db)
+    u.preferences.notifications_enabled = True
+    u.preferences.frequency = NotificationFrequency.IMMEDIATE
+    u.preferences.min_severity = "moderate"
+    db.commit()
+    return u
+
+
+def _smtp_failing(monkeypatch, failures: int) -> None:  # type: ignore[no-untyped-def]
+    """Las primeras `failures` llamadas al SMTP fallan; las demás van al SMTP falso de `sent_emails`."""
+    from app.services import mailer
+
+    real_send = mailer.send
+    state = {"left": failures}
+
+    def flaky(mail):  # type: ignore[no-untyped-def]
+        if state["left"] > 0:
+            state["left"] -= 1
+            raise ConnectionRefusedError("smtp caído")
+        real_send(mail)
+
+    monkeypatch.setattr(mailer, "send", flaky)
+
+
+def _only_notification(db):  # type: ignore[no-untyped-def]
+    from sqlalchemy import select
+
+    from app.models import Notification
+
+    return db.scalar(select(Notification).execution_options(populate_existing=True))
+
+
+def test_failed_alert_email_is_retried(db, sent_emails, monkeypatch):
+    from app.models.enums import NotificationStatus
+    from app.services.notifications import notify_new_alerts, retry_failed
+
+    _subscribe_immediate(db)
+    region = region_in(db)
+    _, report = ingest(db, region, [finding_at(region)])
+    _smtp_failing(monkeypatch, failures=1)
+
+    assert notify_new_alerts(db, [a.id for a in report.created]) == 0
+    row = _only_notification(db)
+    assert row.status == NotificationStatus.FAILED and row.attempts == 1
+
+    assert retry_failed(db) == 1
+    row = _only_notification(db)
+    assert row.status == NotificationStatus.SENT and row.attempts == 2 and row.error is None
+    assert len(sent_emails) == 1
+    assert retry_failed(db) == 0  # ya salió: no se manda dos veces
+
+
+def test_email_retries_stop_after_max_attempts(db, sent_emails, monkeypatch):
+    from app.models.enums import NotificationStatus
+    from app.services.notifications import MAX_ATTEMPTS, notify_new_alerts, retry_failed
+
+    _subscribe_immediate(db)
+    region = region_in(db)
+    _, report = ingest(db, region, [finding_at(region)])
+    _smtp_failing(monkeypatch, failures=99)
+
+    notify_new_alerts(db, [a.id for a in report.created])
+    for _ in range(MAX_ATTEMPTS + 2):
+        assert retry_failed(db) == 0
+    row = _only_notification(db)
+    assert row.status == NotificationStatus.FAILED and row.attempts == MAX_ATTEMPTS
+    assert sent_emails == []
+
+
+def test_retry_respects_unsubscribe(db, sent_emails, monkeypatch):
+    from app.models.enums import NotificationStatus
+    from app.services.notifications import notify_new_alerts, retry_failed
+
+    u = _subscribe_immediate(db)
+    region = region_in(db)
+    _, report = ingest(db, region, [finding_at(region)])
+    _smtp_failing(monkeypatch, failures=1)
+    notify_new_alerts(db, [a.id for a in report.created])
+
+    u.preferences.notifications_enabled = False  # se dio de baja antes del reintento
+    db.commit()
+    assert retry_failed(db) == 0
+    row = _only_notification(db)
+    assert row.status == NotificationStatus.SKIPPED and row.error.startswith("No se reintentó")
+    assert sent_emails == []
+
+
+def test_failed_report_email_is_retried_with_attachment(client, db, analyst_headers, sent_emails, monkeypatch):
+    from app.services.notifications import retry_failed
+
+    region = region_in(db)
+    ingest(db, region, [finding_at(region)])
+    rep = client.post("/api/v1/reports", headers=analyst_headers, json={"format": "csv"}).json()
+    _smtp_failing(monkeypatch, failures=1)
+    r = client.post(f"/api/v1/reports/{rep['id']}/email", headers=analyst_headers, json={"to": ["equipo@example.org"]})
+    assert r.status_code == 200 and r.json()[0]["status"] == "failed"
+
+    assert retry_failed(db) == 1
+    assert sent_emails[0].to == "equipo@example.org"
+    assert sent_emails[0].attachments[0].filename.endswith(".csv")
+
+
+def test_failed_digest_is_sent_next_time(db, sent_emails, monkeypatch):
+    from app.models.enums import NotificationFrequency
+    from app.services.notifications import send_digests
+
+    u = make_user(db)
+    u.preferences.notifications_enabled = True
+    u.preferences.frequency = NotificationFrequency.DAILY
+    u.preferences.min_severity = "moderate"
+    db.commit()
+    region = region_in(db)
+    ingest(db, region, [finding_at(region)])
+    _smtp_failing(monkeypatch, failures=1)
+
+    assert send_digests(db, NotificationFrequency.DAILY) == 0
+    assert send_digests(db, NotificationFrequency.DAILY) == 1  # las alertas no se perdieron
+    assert "Resumen diario" in sent_emails[0].subject
+
+
+def test_production_refuses_mailpit_smtp():
+    import pytest
+    from pydantic import ValidationError
+
+    from app.core.config import Settings
+
+    base = {
+        "_env_file": None,
+        "environment": "production",
+        "database_url": "postgresql+psycopg://u:p@db/x",
+        "jwt_secret": "s" * 48,
+        "cors_origins": ["https://sentinel.example.org"],
+    }
+    with pytest.raises(ValidationError, match="Mailpit"):
+        Settings(**base, smtp_host="mailpit")
+    assert Settings(**base, smtp_host="smtp.example.org").smtp_host == "smtp.example.org"
